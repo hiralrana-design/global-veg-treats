@@ -161,21 +161,18 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
       params={{ id: recipe.id }}
       className="group block overflow-hidden rounded-lg border border-border bg-card transition hover:shadow-xl"
     >
-      <div className="relative aspect-[5/4] overflow-hidden bg-muted">
-        <img
-          src={photoFor(recipe.heroKeyword, 800, 640, 10)}
-          alt={recipe.title}
-          loading="lazy"
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-x-0 bottom-0 flex flex-wrap gap-1.5 bg-gradient-to-t from-black/60 to-transparent p-3">
+      <div className="border-b border-border px-5 pt-5 pb-4">
+        <p className="font-display text-5xl italic text-primary/30">
+          {String(recipe.title.charCodeAt(0) % 99).padStart(2, "0")}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {recipe.noOnionNoGarlic && (
-            <span className="rounded-full bg-accent/95 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest text-accent-foreground">
+            <span className="rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest text-accent-foreground">
               No onion · garlic
             </span>
           )}
           {recipe.methods.map((m) => (
-            <span key={m} className="rounded-full bg-background/90 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest">
+            <span key={m} className="rounded-full border border-border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest">
               {METHOD_LABEL[m]}
             </span>
           ))}

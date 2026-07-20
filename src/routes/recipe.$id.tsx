@@ -22,10 +22,6 @@ export const Route = createFileRoute("/recipe/$id")({
     };
   },
   component: RecipePage,
-      ],
-    };
-  },
-  component: RecipePage,
   notFoundComponent: () => (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">

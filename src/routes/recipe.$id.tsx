@@ -18,7 +18,10 @@ export const Route = createFileRoute("/recipe/$id")({
         { name: "description", content: r.tagline },
         { property: "og:title", content: r.title },
         { property: "og:description", content: r.tagline },
-        { property: "og:image", content: photoFor(r.heroKeyword, 1200, 800, 10) },
+      ],
+    };
+  },
+  component: RecipePage,
       ],
     };
   },

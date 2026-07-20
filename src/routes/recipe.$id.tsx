@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { CUISINES, METHOD_LABEL, getRecipe, type Recipe } from "@/data/recipes";
+import { CUISINES, METHOD_LABEL, getRecipe, photoFor, type Recipe } from "@/data/recipes";
 
 export const Route = createFileRoute("/recipe/$id")({
   loader: ({ params }): { recipe: Recipe } => {
@@ -18,6 +18,7 @@ export const Route = createFileRoute("/recipe/$id")({
         { name: "description", content: r.tagline },
         { property: "og:title", content: r.title },
         { property: "og:description", content: r.tagline },
+        { property: "og:image", content: photoFor(r.heroKeyword, 1200, 800, 10) },
       ],
     };
   },
@@ -38,28 +39,31 @@ function RecipePage() {
 
   return (
     <div className="min-h-screen paper-grain">
-      {/* Top bar */}
       <div className="border-b border-border">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link to="/" className="text-sm uppercase tracking-[0.28em] text-muted-foreground hover:text-primary">
             ← The Experimental Kitchen
           </Link>
-          <p className="text-xs uppercase tracking-[0.28em] text-primary">
-            {cuisine?.label}
-          </p>
+          <p className="text-xs uppercase tracking-[0.28em] text-primary">{cuisine?.label}</p>
         </div>
       </div>
 
-      <article className="mx-auto max-w-5xl px-6 py-14">
-        {/* Header */}
+      {/* Hero image */}
+      <div className="mx-auto max-w-6xl px-6 pt-10">
+        <img
+          src={photoFor(recipe.heroKeyword, 1600, 900, 10)}
+          alt={recipe.title}
+          className="aspect-[16/9] w-full rounded-lg object-cover shadow-2xl"
+        />
+      </div>
+
+      <article className="mx-auto max-w-6xl px-6 py-14">
         <header className="border-b border-border pb-10">
           <p className="text-xs uppercase tracking-[0.28em] text-primary">
             {recipe.time} · Serves {recipe.serves}
           </p>
           <h1 className="mt-4 text-5xl leading-[1.05] md:text-6xl">{recipe.title}</h1>
-          <p className="mt-6 max-w-2xl font-display text-xl italic text-muted-foreground">
-            {recipe.tagline}
-          </p>
+          <p className="mt-6 max-w-2xl font-display text-xl italic text-muted-foreground">{recipe.tagline}</p>
           <div className="mt-6 flex flex-wrap gap-2">
             {recipe.noOnionNoGarlic && (
               <span className="rounded-full bg-accent px-3 py-1 text-xs font-medium uppercase tracking-widest text-accent-foreground">
@@ -67,37 +71,32 @@ function RecipePage() {
               </span>
             )}
             {recipe.methods.map((m) => (
-              <span
-                key={m}
-                className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium uppercase tracking-widest"
-              >
+              <span key={m} className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium uppercase tracking-widest">
                 {METHOD_LABEL[m]}
               </span>
             ))}
           </div>
         </header>
 
-        {/* Body */}
         <div className="mt-12 grid gap-14 md:grid-cols-[2fr_3fr]">
-          {/* Ingredients */}
           <aside>
             <h2 className="mb-6 text-2xl">Ingredients</h2>
-            <ul className="space-y-3">
+            <ul className="grid grid-cols-2 gap-3">
               {recipe.ingredients.map((ing, idx) => (
-                <li
-                  key={idx}
-                  className="flex items-start gap-4 rounded-lg border border-border bg-card p-3"
-                >
-                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-md bg-muted text-3xl">
-                    {ing.emoji}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{ing.name}</p>
-                    <p className="text-xs uppercase tracking-widest text-primary/80">
+                <li key={idx} className="overflow-hidden rounded-lg border border-border bg-card">
+                  <img
+                    src={photoFor(ing.keyword, 240, 240, 5)}
+                    alt={ing.name}
+                    loading="lazy"
+                    className="aspect-square w-full object-cover"
+                  />
+                  <div className="p-2.5">
+                    <p className="text-sm font-medium leading-tight">{ing.name}</p>
+                    <p className="mt-0.5 text-[10px] uppercase tracking-widest text-primary/80">
                       {ing.quantity}
                     </p>
                     {ing.note && (
-                      <p className="mt-1 text-xs italic text-muted-foreground">{ing.note}</p>
+                      <p className="mt-1 text-[11px] italic leading-tight text-muted-foreground">{ing.note}</p>
                     )}
                   </div>
                 </li>
@@ -105,7 +104,6 @@ function RecipePage() {
             </ul>
           </aside>
 
-          {/* Method + description */}
           <div>
             <section className="mb-10">
               <h2 className="mb-4 text-2xl">The dish</h2>
@@ -128,12 +126,8 @@ function RecipePage() {
 
             {recipe.experimentalNote && (
               <section className="mt-10 rounded-lg border-l-4 border-primary bg-card p-6">
-                <p className="text-xs uppercase tracking-[0.28em] text-primary">
-                  Experimental note
-                </p>
-                <p className="mt-3 font-display text-lg italic leading-relaxed">
-                  {recipe.experimentalNote}
-                </p>
+                <p className="text-xs uppercase tracking-[0.28em] text-primary">Experimental note</p>
+                <p className="mt-3 font-display text-lg italic leading-relaxed">{recipe.experimentalNote}</p>
               </section>
             )}
           </div>

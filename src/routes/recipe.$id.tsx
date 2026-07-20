@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { CUISINES, METHOD_LABEL, getRecipe, photoFor, type Recipe } from "@/data/recipes";
+import { CUISINES, METHOD_LABEL, getRecipe, type Recipe } from "@/data/recipes";
 
 export const Route = createFileRoute("/recipe/$id")({
   loader: ({ params }): { recipe: Recipe } => {
@@ -18,7 +18,6 @@ export const Route = createFileRoute("/recipe/$id")({
         { name: "description", content: r.tagline },
         { property: "og:title", content: r.title },
         { property: "og:description", content: r.tagline },
-        { property: "og:image", content: photoFor(r.heroKeyword, 1200, 800, 10) },
       ],
     };
   },
@@ -48,14 +47,6 @@ function RecipePage() {
         </div>
       </div>
 
-      {/* Hero image */}
-      <div className="mx-auto max-w-6xl px-6 pt-10">
-        <img
-          src={photoFor(recipe.heroKeyword, 1600, 900, 10)}
-          alt={recipe.title}
-          className="aspect-[16/9] w-full rounded-lg object-cover shadow-2xl"
-        />
-      </div>
 
       <article className="mx-auto max-w-6xl px-6 py-14">
         <header className="border-b border-border pb-10">
@@ -83,22 +74,14 @@ function RecipePage() {
             <h2 className="mb-6 text-2xl">Ingredients</h2>
             <ul className="grid grid-cols-2 gap-3">
               {recipe.ingredients.map((ing, idx) => (
-                <li key={idx} className="overflow-hidden rounded-lg border border-border bg-card">
-                  <img
-                    src={photoFor(ing.keyword, 240, 240, 5)}
-                    alt={ing.name}
-                    loading="lazy"
-                    className="aspect-square w-full object-cover"
-                  />
-                  <div className="p-2.5">
-                    <p className="text-sm font-medium leading-tight">{ing.name}</p>
-                    <p className="mt-0.5 text-[10px] uppercase tracking-widest text-primary/80">
-                      {ing.quantity}
-                    </p>
+                <li key={idx} className="rounded-lg border border-border bg-card p-3">
+                  <p className="text-sm font-medium leading-tight">{ing.name}</p>
+                  <p className="mt-1 text-[10px] uppercase tracking-widest text-primary/80">
+                    {ing.quantity}
+                  </p>
                     {ing.note && (
                       <p className="mt-1 text-[11px] italic leading-tight text-muted-foreground">{ing.note}</p>
                     )}
-                  </div>
                 </li>
               ))}
             </ul>

@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { CUISINES, METHOD_LABEL, RECIPES, photoFor, type Cuisine, type Method, type Recipe } from "@/data/recipes";
-import heroImg from "@/assets/hero.jpg";
+import { CUISINES, METHOD_LABEL, RECIPES, type Cuisine, type Method, type Recipe } from "@/data/recipes";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -53,17 +52,13 @@ function Home() {
               </span>
             </div>
           </div>
-          <div className="relative">
-            <img
-              src={heroImg}
-              alt="A flat-lay of vegetarian ingredients"
-              width={1600}
-              height={1000}
-              className="aspect-[4/3] w-full rounded-lg object-cover shadow-2xl"
-            />
-            <div className="absolute -bottom-4 -left-4 hidden rounded-lg border border-border bg-card p-4 shadow-lg md:block">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Chapter open</p>
-              <p className="mt-1 font-display text-lg">On smoke, salt & silence</p>
+          <div className="relative hidden md:block">
+            <div className="flex aspect-[4/3] w-full items-center justify-center rounded-lg border border-border bg-card p-10 text-center shadow-2xl">
+              <div>
+                <p className="text-xs uppercase tracking-[0.28em] text-primary">Chapter open</p>
+                <p className="mt-3 font-display text-3xl italic leading-snug">On smoke, salt & silence</p>
+                <p className="mt-4 text-sm text-muted-foreground">Notes from a kitchen where nothing runs from an egg or an animal.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -166,21 +161,18 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
       params={{ id: recipe.id }}
       className="group block overflow-hidden rounded-lg border border-border bg-card transition hover:shadow-xl"
     >
-      <div className="relative aspect-[5/4] overflow-hidden bg-muted">
-        <img
-          src={photoFor(recipe.heroKeyword, 800, 640, 10)}
-          alt={recipe.title}
-          loading="lazy"
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-x-0 bottom-0 flex flex-wrap gap-1.5 bg-gradient-to-t from-black/60 to-transparent p-3">
+      <div className="border-b border-border px-5 pt-5 pb-4">
+        <p className="font-display text-5xl italic text-primary/30">
+          {String(recipe.title.charCodeAt(0) % 99).padStart(2, "0")}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {recipe.noOnionNoGarlic && (
-            <span className="rounded-full bg-accent/95 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest text-accent-foreground">
+            <span className="rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest text-accent-foreground">
               No onion · garlic
             </span>
           )}
           {recipe.methods.map((m) => (
-            <span key={m} className="rounded-full bg-background/90 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest">
+            <span key={m} className="rounded-full border border-border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest">
               {METHOD_LABEL[m]}
             </span>
           ))}

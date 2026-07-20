@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { CUISINES, METHOD_LABEL, getRecipe, type Recipe } from "@/data/recipes";
+import { useEffect, useMemo, useState } from "react";
+import { CUISINES, METHOD_LABEL, RECIPES, getRecipe, type Recipe } from "@/data/recipes";
 
 export const Route = createFileRoute("/recipe/$id")({
   loader: ({ params }): { recipe: Recipe } => {
@@ -32,21 +33,95 @@ export const Route = createFileRoute("/recipe/$id")({
   ),
 });
 
+const FAV_KEY = "tek.favs.v1";
+
 function RecipePage() {
   const { recipe } = Route.useLoaderData() as { recipe: Recipe };
   const cuisine = CUISINES.find((c) => c.id === recipe.cuisine);
 
+  const [checked, setChecked] = useState<Set<number>>(new Set());
+  const [doneSteps, setDoneSteps] = useState<Set<number>>(new Set());
+  const [saved, setSaved] = useState(false);
+
+  // Prev / Next within the same cuisine
+  const { prev, next } = useMemo(() => {
+    const list = RECIPES.filter((r) => r.cuisine === recipe.cuisine);
+    const i = list.findIndex((r) => r.id === recipe.id);
+    return {
+      prev: i > 0 ? list[i - 1] : null,
+      next: i >= 0 && i < list.length - 1 ? list[i + 1] : null,
+    };
+  }, [recipe]);
+
+  useEffect(() => {
+    setChecked(new Set());
+    setDoneSteps(new Set());
+    try {
+      const raw = localStorage.getItem(FAV_KEY);
+      const list: string[] = raw ? JSON.parse(raw) : [];
+      setSaved(list.includes(recipe.id));
+    } catch {}
+    window.scrollTo({ top: 0 });
+  }, [recipe.id]);
+
+  const toggleSave = () => {
+    try {
+      const raw = localStorage.getItem(FAV_KEY);
+      const list: string[] = raw ? JSON.parse(raw) : [];
+      const next = list.includes(recipe.id)
+        ? list.filter((x) => x !== recipe.id)
+        : [...list, recipe.id];
+      localStorage.setItem(FAV_KEY, JSON.stringify(next));
+      setSaved(next.includes(recipe.id));
+    } catch {}
+  };
+
+  const toggleIngredient = (i: number) => {
+    setChecked((prev) => {
+      const n = new Set(prev);
+      n.has(i) ? n.delete(i) : n.add(i);
+      return n;
+    });
+  };
+  const toggleStep = (i: number) => {
+    setDoneSteps((prev) => {
+      const n = new Set(prev);
+      n.has(i) ? n.delete(i) : n.add(i);
+      return n;
+    });
+  };
+  const progress = Math.round((doneSteps.size / Math.max(recipe.steps.length, 1)) * 100);
+
   return (
     <div className="min-h-screen paper-grain">
-      <div className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link to="/" className="text-sm uppercase tracking-[0.28em] text-muted-foreground hover:text-primary">
+      <div className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur print:hidden">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
+          <Link to="/" className="text-xs uppercase tracking-[0.28em] text-muted-foreground hover:text-primary md:text-sm">
             ← The Experimental Kitchen
           </Link>
-          <p className="text-xs uppercase tracking-[0.28em] text-primary">{cuisine?.label}</p>
+          <div className="flex items-center gap-2">
+            <span className="hidden text-xs uppercase tracking-[0.28em] text-primary sm:inline">
+              {cuisine?.label}
+            </span>
+            <button
+              onClick={toggleSave}
+              aria-label={saved ? "Remove from saved" : "Save recipe"}
+              className={`grid h-9 w-9 place-items-center rounded-full border border-border bg-card transition hover:border-primary ${
+                saved ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <span className="text-lg leading-none">{saved ? "♥" : "♡"}</span>
+            </button>
+            <button
+              onClick={() => window.print()}
+              aria-label="Print recipe"
+              className="hidden h-9 rounded-full border border-border bg-card px-3 text-xs uppercase tracking-widest text-muted-foreground transition hover:border-primary hover:text-primary sm:inline-flex sm:items-center"
+            >
+              Print
+            </button>
+          </div>
         </div>
       </div>
-
 
       <article className="mx-auto max-w-6xl px-6 py-14">
         <header className="border-b border-border pb-10">
@@ -70,20 +145,50 @@ function RecipePage() {
         </header>
 
         <div className="mt-12 grid gap-14 md:grid-cols-[2fr_3fr]">
-          <aside>
-            <h2 className="mb-6 text-2xl">Ingredients</h2>
-            <ul className="grid grid-cols-2 gap-3">
-              {recipe.ingredients.map((ing, idx) => (
-                <li key={idx} className="rounded-lg border border-border bg-card p-3">
-                  <p className="text-sm font-medium leading-tight">{ing.name}</p>
-                  <p className="mt-1 text-[10px] uppercase tracking-widest text-primary/80">
-                    {ing.quantity}
-                  </p>
-                    {ing.note && (
-                      <p className="mt-1 text-[11px] italic leading-tight text-muted-foreground">{ing.note}</p>
-                    )}
-                </li>
-              ))}
+          <aside className="md:sticky md:top-24 md:self-start">
+            <div className="mb-4 flex items-baseline justify-between">
+              <h2 className="text-2xl">Ingredients</h2>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                {checked.size}/{recipe.ingredients.length}
+              </p>
+            </div>
+            <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {recipe.ingredients.map((ing, idx) => {
+                const isChecked = checked.has(idx);
+                return (
+                  <li key={idx}>
+                    <button
+                      onClick={() => toggleIngredient(idx)}
+                      className={`w-full rounded-lg border p-3 text-left transition ${
+                        isChecked
+                          ? "border-primary/30 bg-card/60 opacity-60"
+                          : "border-border bg-card hover:border-primary/40"
+                      }`}
+                    >
+                      <div className="flex items-start gap-2">
+                        <span
+                          className={`mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded border transition ${
+                            isChecked ? "border-primary bg-primary text-primary-foreground" : "border-border"
+                          }`}
+                        >
+                          {isChecked && <span className="text-[10px] leading-none">✓</span>}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className={`text-sm font-medium leading-tight ${isChecked ? "line-through" : ""}`}>
+                            {ing.name}
+                          </p>
+                          <p className="mt-1 text-[10px] uppercase tracking-widest text-primary/80">
+                            {ing.quantity}
+                          </p>
+                          {ing.note && (
+                            <p className="mt-1 text-[11px] italic leading-tight text-muted-foreground">{ing.note}</p>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </aside>
 
@@ -94,16 +199,47 @@ function RecipePage() {
             </section>
 
             <section>
-              <h2 className="mb-6 text-2xl">Method</h2>
-              <ol className="space-y-6">
-                {recipe.steps.map((step, idx) => (
-                  <li key={idx} className="flex gap-5">
-                    <span className="font-display text-4xl italic text-primary/60">
-                      {String(idx + 1).padStart(2, "0")}
-                    </span>
-                    <p className="flex-1 pt-2 leading-relaxed text-foreground/85">{step}</p>
-                  </li>
-                ))}
+              <div className="mb-6 flex items-baseline justify-between">
+                <h2 className="text-2xl">Method</h2>
+                <p className="text-xs uppercase tracking-widest text-muted-foreground">{progress}% cooked</p>
+              </div>
+              <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-border/60">
+                <div
+                  className="h-full bg-primary transition-all duration-500"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <ol className="space-y-4">
+                {recipe.steps.map((step, idx) => {
+                  const done = doneSteps.has(idx);
+                  return (
+                    <li key={idx}>
+                      <button
+                        onClick={() => toggleStep(idx)}
+                        className={`flex w-full gap-5 rounded-lg border p-4 text-left transition ${
+                          done
+                            ? "border-primary/30 bg-card/60"
+                            : "border-transparent hover:border-border hover:bg-card"
+                        }`}
+                      >
+                        <span
+                          className={`font-display text-4xl italic transition ${
+                            done ? "text-primary/30 line-through" : "text-primary/60"
+                          }`}
+                        >
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+                        <p
+                          className={`flex-1 pt-2 leading-relaxed transition ${
+                            done ? "text-foreground/40 line-through" : "text-foreground/85"
+                          }`}
+                        >
+                          {step}
+                        </p>
+                      </button>
+                    </li>
+                  );
+                })}
               </ol>
             </section>
 
@@ -115,9 +251,35 @@ function RecipePage() {
             )}
           </div>
         </div>
+
+        {/* Prev / Next within cuisine */}
+        {(prev || next) && (
+          <nav className="mt-16 grid gap-4 border-t border-border pt-8 sm:grid-cols-2">
+            {prev ? (
+              <Link
+                to="/recipe/$id"
+                params={{ id: prev.id }}
+                className="group rounded-lg border border-border bg-card p-5 transition hover:border-primary"
+              >
+                <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">← Previous</p>
+                <p className="mt-2 text-lg leading-tight group-hover:text-primary">{prev.title}</p>
+              </Link>
+            ) : <div />}
+            {next ? (
+              <Link
+                to="/recipe/$id"
+                params={{ id: next.id }}
+                className="group rounded-lg border border-border bg-card p-5 text-right transition hover:border-primary sm:text-right"
+              >
+                <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">Next →</p>
+                <p className="mt-2 text-lg leading-tight group-hover:text-primary">{next.title}</p>
+              </Link>
+            ) : <div />}
+          </nav>
+        )}
       </article>
 
-      <footer className="border-t border-border py-10 text-center text-xs uppercase tracking-[0.28em] text-muted-foreground">
+      <footer className="border-t border-border py-10 text-center text-xs uppercase tracking-[0.28em] text-muted-foreground print:hidden">
         <Link to="/" className="hover:text-primary">Return to the book</Link>
       </footer>
     </div>

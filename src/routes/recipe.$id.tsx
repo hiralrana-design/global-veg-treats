@@ -1,8 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { CUISINES, METHOD_LABEL, getRecipe } from "@/data/recipes";
+import { CUISINES, METHOD_LABEL, getRecipe, type Recipe } from "@/data/recipes";
 
 export const Route = createFileRoute("/recipe/$id")({
-  loader: ({ params }) => {
+  loader: ({ params }): { recipe: Recipe } => {
     const recipe = getRecipe(params.id);
     if (!recipe) throw notFound();
     return { recipe };

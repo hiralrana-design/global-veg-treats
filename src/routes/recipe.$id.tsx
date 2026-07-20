@@ -82,7 +82,6 @@ function RecipePage() {
                     {ing.note && (
                       <p className="mt-1 text-[11px] italic leading-tight text-muted-foreground">{ing.note}</p>
                     )}
-                  </div>
                 </li>
               ))}
             </ul>

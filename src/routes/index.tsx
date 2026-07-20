@@ -52,17 +52,13 @@ function Home() {
               </span>
             </div>
           </div>
-          <div className="relative">
-            <img
-              src={heroImg}
-              alt="A flat-lay of vegetarian ingredients"
-              width={1600}
-              height={1000}
-              className="aspect-[4/3] w-full rounded-lg object-cover shadow-2xl"
-            />
-            <div className="absolute -bottom-4 -left-4 hidden rounded-lg border border-border bg-card p-4 shadow-lg md:block">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Chapter open</p>
-              <p className="mt-1 font-display text-lg">On smoke, salt & silence</p>
+          <div className="relative hidden md:block">
+            <div className="flex aspect-[4/3] w-full items-center justify-center rounded-lg border border-border bg-card p-10 text-center shadow-2xl">
+              <div>
+                <p className="text-xs uppercase tracking-[0.28em] text-primary">Chapter open</p>
+                <p className="mt-3 font-display text-3xl italic leading-snug">On smoke, salt & silence</p>
+                <p className="mt-4 text-sm text-muted-foreground">Notes from a kitchen where nothing runs from an egg or an animal.</p>
+              </div>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { CUISINES, METHOD_LABEL, RECIPES, type Cuisine, type Method } from "@/data/recipes";
+import { CUISINES, METHOD_LABEL, RECIPES, photoFor, type Cuisine, type Method, type Recipe } from "@/data/recipes";
 import heroImg from "@/assets/hero.jpg";
 
 export const Route = createFileRoute("/")({
@@ -25,7 +25,6 @@ function Home() {
 
   return (
     <div className="min-h-screen paper-grain">
-      {/* Hero */}
       <header className="relative overflow-hidden border-b border-border">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-2 md:py-24">
           <div className="flex flex-col justify-center">
@@ -70,21 +69,14 @@ function Home() {
         </div>
       </header>
 
-      {/* Filter bar */}
       <section className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-6 py-4">
           <FilterGroup label="Dietary">
-            <Chip active={ngoFilter === "all"} onClick={() => setNgoFilter("all")}>
-              All vegetarian
-            </Chip>
-            <Chip active={ngoFilter === "ngo"} onClick={() => setNgoFilter("ngo")}>
-              No onion · No garlic
-            </Chip>
+            <Chip active={ngoFilter === "all"} onClick={() => setNgoFilter("all")}>All vegetarian</Chip>
+            <Chip active={ngoFilter === "ngo"} onClick={() => setNgoFilter("ngo")}>No onion · No garlic</Chip>
           </FilterGroup>
           <FilterGroup label="Cooked on">
-            <Chip active={methodFilter === "all"} onClick={() => setMethodFilter("all")}>
-              Any
-            </Chip>
+            <Chip active={methodFilter === "all"} onClick={() => setMethodFilter("all")}>Any</Chip>
             {(["gas", "oven", "airfryer"] as Method[]).map((m) => (
               <Chip key={m} active={methodFilter === m} onClick={() => setMethodFilter(m)}>
                 {METHOD_LABEL[m]}
@@ -99,16 +91,13 @@ function Home() {
             >
               <option value="all">Every kitchen</option>
               {CUISINES.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.label}
-                </option>
+                <option key={c.id} value={c.id}>{c.label}</option>
               ))}
             </select>
           </FilterGroup>
         </div>
       </section>
 
-      {/* Sections per cuisine */}
       <main className="mx-auto max-w-7xl px-6 py-16">
         {CUISINES.filter((c) => cuisineFilter === "all" || cuisineFilter === c.id).map((c) => {
           const recipes = byCuisine(c.id);
@@ -120,15 +109,14 @@ function Home() {
                   <p className="text-xs uppercase tracking-[0.28em] text-primary">Chapter</p>
                   <h2 className="mt-2 text-3xl md:text-4xl">{c.label}</h2>
                   <p className="mt-2 max-w-xl text-sm text-muted-foreground">{c.blurb}</p>
+                  <p className="mt-1 text-xs text-muted-foreground/70">{recipes.length} recipes</p>
                 </div>
                 <p className="hidden font-display text-4xl italic text-muted-foreground/40 md:block">
                   {String(CUISINES.indexOf(c) + 1).padStart(2, "0")}
                 </p>
               </div>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {recipes.map((r) => (
-                  <RecipeCard key={r.id} recipe={r} />
-                ))}
+                {recipes.map((r) => <RecipeCard key={r.id} recipe={r} />)}
               </div>
             </section>
           );
@@ -158,22 +146,12 @@ function FilterGroup({ label, children }: { label: string; children: React.React
   );
 }
 
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       onClick={onClick}
       className={`rounded-full border px-3.5 py-1.5 text-sm transition ${
-        active
-          ? "border-primary bg-primary text-primary-foreground"
-          : "border-border bg-card hover:border-primary/50"
+        active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card hover:border-primary/50"
       }`}
     >
       {children}
@@ -181,7 +159,7 @@ function Chip({
   );
 }
 
-function RecipeCard({ recipe }: { recipe: (typeof RECIPES)[number] }) {
+function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
     <Link
       to="/recipe/$id"
@@ -189,22 +167,20 @@ function RecipeCard({ recipe }: { recipe: (typeof RECIPES)[number] }) {
       className="group block overflow-hidden rounded-lg border border-border bg-card transition hover:shadow-xl"
     >
       <div className="relative aspect-[5/4] overflow-hidden bg-muted">
-        <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-3 p-6 text-5xl transition group-hover:scale-105">
-          {recipe.ingredients.slice(0, 6).map((ing, idx) => (
-            <span key={idx} className="drop-shadow">{ing.emoji}</span>
-          ))}
-        </div>
-        <div className="absolute inset-x-0 bottom-0 flex flex-wrap gap-1.5 p-3">
+        <img
+          src={photoFor(recipe.heroKeyword, 800, 640, 10)}
+          alt={recipe.title}
+          loading="lazy"
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-x-0 bottom-0 flex flex-wrap gap-1.5 bg-gradient-to-t from-black/60 to-transparent p-3">
           {recipe.noOnionNoGarlic && (
             <span className="rounded-full bg-accent/95 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest text-accent-foreground">
               No onion · garlic
             </span>
           )}
           {recipe.methods.map((m) => (
-            <span
-              key={m}
-              className="rounded-full bg-background/90 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest"
-            >
+            <span key={m} className="rounded-full bg-background/90 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest">
               {METHOD_LABEL[m]}
             </span>
           ))}

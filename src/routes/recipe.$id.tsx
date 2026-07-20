@@ -33,7 +33,7 @@ export const Route = createFileRoute("/recipe/$id")({
 });
 
 function RecipePage() {
-  const { recipe } = Route.useLoaderData();
+  const { recipe } = Route.useLoaderData() as { recipe: Recipe };
   const cuisine = CUISINES.find((c) => c.id === recipe.cuisine);
 
   return (

@@ -74,18 +74,11 @@ function RecipePage() {
             <h2 className="mb-6 text-2xl">Ingredients</h2>
             <ul className="grid grid-cols-2 gap-3">
               {recipe.ingredients.map((ing, idx) => (
-                <li key={idx} className="overflow-hidden rounded-lg border border-border bg-card">
-                  <img
-                    src={photoFor(ing.keyword, 240, 240, 5)}
-                    alt={ing.name}
-                    loading="lazy"
-                    className="aspect-square w-full object-cover"
-                  />
-                  <div className="p-2.5">
-                    <p className="text-sm font-medium leading-tight">{ing.name}</p>
-                    <p className="mt-0.5 text-[10px] uppercase tracking-widest text-primary/80">
-                      {ing.quantity}
-                    </p>
+                <li key={idx} className="rounded-lg border border-border bg-card p-3">
+                  <p className="text-sm font-medium leading-tight">{ing.name}</p>
+                  <p className="mt-1 text-[10px] uppercase tracking-widest text-primary/80">
+                    {ing.quantity}
+                  </p>
                     {ing.note && (
                       <p className="mt-1 text-[11px] italic leading-tight text-muted-foreground">{ing.note}</p>
                     )}

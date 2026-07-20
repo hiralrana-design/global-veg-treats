@@ -47,14 +47,6 @@ function RecipePage() {
         </div>
       </div>
 
-      {/* Hero image */}
-      <div className="mx-auto max-w-6xl px-6 pt-10">
-        <img
-          src={photoFor(recipe.heroKeyword, 1600, 900, 10)}
-          alt={recipe.title}
-          className="aspect-[16/9] w-full rounded-lg object-cover shadow-2xl"
-        />
-      </div>
 
       <article className="mx-auto max-w-6xl px-6 py-14">
         <header className="border-b border-border pb-10">

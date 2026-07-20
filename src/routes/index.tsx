@@ -125,9 +125,6 @@ function Home() {
         )}
       </main>
 
-      <footer className="border-t border-border py-10 text-center text-xs uppercase tracking-[0.28em] text-muted-foreground">
-        The Experimental Kitchen · Eggless & Vegetarian · Everything in English
-      </footer>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CUISINES, METHOD_LABEL, RECIPES, type Cuisine, type Method, type Recipe } from "@/data/recipes";
+import { CUISINES, METHOD_LABEL, RECIPES, photoFor, type Cuisine, type Method, type Recipe } from "@/data/recipes";
 
 export const Route = createFileRoute("/")({
   component: Home,

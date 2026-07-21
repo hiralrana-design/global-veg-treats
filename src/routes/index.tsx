@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { CUISINES, METHOD_LABEL, RECIPES, type Cuisine, type Method, type Recipe } from "@/data/recipes";
+import worldBlur from "@/assets/world-blur.jpg";
 
 export const Route = createFileRoute("/")({
   component: Home,

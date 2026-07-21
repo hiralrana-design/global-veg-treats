@@ -85,7 +85,7 @@ function Home() {
   return (
     <div className="min-h-screen paper-grain">
       <header className="relative overflow-hidden border-b border-border">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-2 md:py-24">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 pt-16 pb-6 md:grid-cols-2 md:pt-24 md:pb-8">
           <div className="flex flex-col justify-center">
             <p className="mb-4 text-xs uppercase tracking-[0.28em] text-primary">
               Volume 01 · The Experimental Kitchen
@@ -101,13 +101,13 @@ function Home() {
               inside an oven or in an air fryer.
             </p>
             <div className="mt-8 flex flex-wrap gap-3 text-sm">
-              <span className="rounded-full border border-border bg-card px-4 py-2">
+              <span className="rounded-full border border-primary bg-primary px-4 py-2 text-primary-foreground">
                 {RECIPES.length} recipes
               </span>
-              <span className="rounded-full border border-border bg-card px-4 py-2">
+              <span className="rounded-full border border-primary bg-primary px-4 py-2 text-primary-foreground">
                 {RECIPES.filter((r) => r.noOnionNoGarlic).length} no onion · no garlic
               </span>
-              <span className="rounded-full border border-border bg-card px-4 py-2">
+              <span className="rounded-full border border-primary bg-primary px-4 py-2 text-primary-foreground">
                 {RECIPES.filter((r) => r.cuisine === "dessert").length} desserts
               </span>
             </div>

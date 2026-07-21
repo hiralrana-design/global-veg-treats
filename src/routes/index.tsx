@@ -360,6 +360,41 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
   );
 }
 
+function StatChip({
+  icon,
+  label,
+  count,
+  active,
+  onClick,
+  hint,
+}: {
+  icon: string;
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+  hint?: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      title={hint}
+      aria-pressed={active}
+      className={`group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 ${
+        active
+          ? "border-primary bg-primary text-primary-foreground shadow-md"
+          : "border-primary/60 bg-primary/5 text-primary hover:bg-primary hover:text-primary-foreground"
+      }`}
+    >
+      <span aria-hidden className="text-base leading-none">{icon}</span>
+      <span className="font-semibold tabular-nums">{count}</span>
+      <span className="opacity-90">{label}</span>
+      {active && <span aria-hidden className="ml-0.5 text-xs">✓</span>}
+    </button>
+  );
+}
+
+
 function RecipeCard({
   recipe,
   saved,

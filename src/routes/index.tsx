@@ -357,26 +357,19 @@ function RecipeCard({
         params={{ id: recipe.id }}
         className="block"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden border-b border-border bg-muted">
-          <img
-            src={photoFor(recipe.heroKeyword, 600, 450, recipe.id.length)}
-            alt={recipe.title}
-            loading="lazy"
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-          />
-          <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1.5">
-            {recipe.noOnionNoGarlic && (
-              <span className="rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest text-accent-foreground">
-                No onion · garlic
-              </span>
-            )}
-            {recipe.methods.map((m) => (
-              <span key={m} className="rounded-full border border-border bg-background/90 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest backdrop-blur">
-                {METHOD_LABEL[m]}
-              </span>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-1.5 border-b border-border px-5 pt-5">
+          {recipe.noOnionNoGarlic && (
+            <span className="rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest text-accent-foreground">
+              No onion · garlic
+            </span>
+          )}
+          {recipe.methods.map((m) => (
+            <span key={m} className="rounded-full border border-border bg-background/90 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest">
+              {METHOD_LABEL[m]}
+            </span>
+          ))}
         </div>
+
         <div className="p-5">
           <p className="text-xs uppercase tracking-widest text-primary/70">
             {recipe.time} · Serves {recipe.serves}

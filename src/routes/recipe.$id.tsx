@@ -110,7 +110,9 @@ function RecipePage() {
                 saved ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <span className="text-lg leading-none">{saved ? "♥" : "♡"}</span>
+            <svg aria-hidden viewBox="0 0 24 24" className={`h-5 w-5 transition ${saved ? "fill-primary text-primary" : "fill-none text-current"}`} stroke="currentColor" strokeWidth="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
             </button>
             <button
               onClick={() => window.print()}
@@ -171,7 +173,11 @@ function RecipePage() {
                             isChecked ? "border-primary bg-primary text-primary-foreground" : "border-border"
                           }`}
                         >
-                          {isChecked && <span className="text-[10px] leading-none">✓</span>}
+                          {isChecked && (
+                            <svg aria-hidden viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="3">
+                              <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                          )}
                         </span>
                         <div className="min-w-0 flex-1">
                           <p className={`text-sm font-medium leading-tight ${isChecked ? "line-through" : ""}`}>

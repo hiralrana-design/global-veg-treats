@@ -267,6 +267,35 @@ function Home() {
         )}
       </main>
 
+      <footer className="border-t border-border bg-card">
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div>
+              <p className="text-xs uppercase tracking-[0.28em] text-primary">Published by</p>
+              <p className="mt-3 font-display text-3xl italic">Hiral Rana</p>
+              <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                A private volume from an experimental home kitchen — eggless, vegetarian, curious.
+              </p>
+            </div>
+            <div className="md:text-right">
+              <p className="text-xs uppercase tracking-[0.28em] text-primary">Contact</p>
+              <ul className="mt-3 space-y-1.5 text-sm">
+                <li>
+                  <a href="tel:+919978345660" className="hover:text-primary">+91 99783 45660</a>
+                </li>
+                <li>
+                  <a href="mailto:ranahiral410@gmail.com" className="hover:text-primary">ranahiral410@gmail.com</a>
+                </li>
+                <li className="text-muted-foreground">Bhavnagar, Gujarat, India</li>
+              </ul>
+            </div>
+          </div>
+          <p className="mt-10 border-t border-border pt-6 text-center text-xs uppercase tracking-widest text-muted-foreground">
+            © {new Date().getFullYear()} Hiral Rana · The Experimental Kitchen
+          </p>
+        </div>
+      </footer>
+
       {/* Scroll-to-top */}
       {showTop && (
         <button

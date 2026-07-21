@@ -225,7 +225,7 @@ function Home() {
         {activeChapters.map((c) => {
           const recipes = byCuisine(c.id);
           return (
-            <section key={c.id} id={`chapter-${c.id}`} className="mb-20 scroll-mt-40">
+            <section key={c.id} id={`chapter-${c.id}`} className="mb-16 scroll-mt-40 last:mb-0">
               <div className="mb-8 flex items-end justify-between gap-6 border-b border-border pb-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.28em] text-primary">Chapter</p>

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { CUISINES, METHOD_LABEL, RECIPES, type Cuisine, type Method, type Recipe } from "@/data/recipes";
+import worldBlur from "@/assets/world-blur.jpg";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -85,7 +86,16 @@ function Home() {
   return (
     <div className="min-h-screen paper-grain">
       <header className="relative overflow-hidden border-b border-border">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 pt-16 pb-6 md:grid-cols-2 md:pt-24 md:pb-8">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.28] [background-position:center] [background-repeat:no-repeat] [background-size:cover]"
+          style={{ backgroundImage: `url(${worldBlur})`, filter: "blur(6px) saturate(1.05)" }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background"
+        />
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-6 pt-16 pb-6 md:grid-cols-2 md:pt-24 md:pb-8">
           <div className="flex flex-col justify-center">
             <p className="mb-4 text-xs uppercase tracking-[0.28em] text-primary">
               Volume 01 · The Experimental Kitchen
@@ -101,19 +111,36 @@ function Home() {
               inside an oven or in an air fryer.
             </p>
             <div className="mt-8 flex flex-wrap gap-3 text-sm">
-              <span className="rounded-full border border-primary bg-primary px-4 py-2 text-primary-foreground">
-                {RECIPES.length} recipes
-              </span>
-              <span className="rounded-full border border-primary bg-primary px-4 py-2 text-primary-foreground">
-                {RECIPES.filter((r) => r.noOnionNoGarlic).length} no onion · no garlic
-              </span>
-              <span className="rounded-full border border-primary bg-primary px-4 py-2 text-primary-foreground">
-                {RECIPES.filter((r) => r.cuisine === "dessert").length} desserts
-              </span>
+              <StatChip
+                icon="📖"
+                label="recipes"
+                count={RECIPES.length}
+                active={!anyActive}
+                onClick={clearFilters}
+                hint="Show every recipe"
+              />
+              <StatChip
+                icon="🌱"
+                label="no onion · no garlic"
+                count={RECIPES.filter((r) => r.noOnionNoGarlic).length}
+                active={ngoFilter === "ngo"}
+                onClick={() => setNgoFilter((v) => (v === "ngo" ? "all" : "ngo"))}
+                hint="Filter satvik recipes"
+              />
+              <StatChip
+                icon="🍰"
+                label="desserts"
+                count={RECIPES.filter((r) => r.cuisine === "dessert").length}
+                active={cuisineFilter === "dessert"}
+                onClick={() =>
+                  setCuisineFilter((v) => (v === "dessert" ? "all" : ("dessert" as Cuisine)))
+                }
+                hint="Jump to sweets"
+              />
             </div>
           </div>
           <div className="relative hidden md:block">
-            <div className="flex aspect-[4/3] w-full items-center justify-center rounded-lg border border-border bg-card p-10 text-center shadow-2xl">
+            <div className="flex aspect-[4/3] w-full items-center justify-center rounded-lg border border-border bg-card/90 p-10 text-center shadow-2xl backdrop-blur-sm">
               <div>
                 <p className="text-xs uppercase tracking-[0.28em] text-primary">Chapter open</p>
                 <p className="mt-3 font-display text-3xl italic leading-snug">On smoke, salt & silence</p>
@@ -123,6 +150,7 @@ function Home() {
           </div>
         </div>
       </header>
+
 
       {/* Sticky control bar */}
       <section className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur">
@@ -331,6 +359,41 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
     </button>
   );
 }
+
+function StatChip({
+  icon,
+  label,
+  count,
+  active,
+  onClick,
+  hint,
+}: {
+  icon: string;
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+  hint?: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      title={hint}
+      aria-pressed={active}
+      className={`group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 ${
+        active
+          ? "border-primary bg-primary text-primary-foreground shadow-md"
+          : "border-primary/60 bg-primary/5 text-primary hover:bg-primary hover:text-primary-foreground"
+      }`}
+    >
+      <span aria-hidden className="text-base leading-none">{icon}</span>
+      <span className="font-semibold tabular-nums">{count}</span>
+      <span className="opacity-90">{label}</span>
+      {active && <span aria-hidden className="ml-0.5 text-xs">✓</span>}
+    </button>
+  );
+}
+
 
 function RecipeCard({
   recipe,

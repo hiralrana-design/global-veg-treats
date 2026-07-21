@@ -221,7 +221,7 @@ function Home() {
         </div>
       </section>
 
-      <main className="mx-auto max-w-7xl px-6 py-16">
+      <main className="mx-auto max-w-7xl px-6 pt-16 pb-6">
         {activeChapters.map((c) => {
           const recipes = byCuisine(c.id);
           return (
